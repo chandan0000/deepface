@@ -41,6 +41,4 @@ def findThreshold(model_name, distance_metric):
         "DeepID": {"cosine": 0.015, "euclidean": 45, "euclidean_l2": 0.17},
     }
 
-    threshold = thresholds.get(model_name, base_threshold).get(distance_metric, 0.4)
-
-    return threshold
+    return thresholds.get(model_name, base_threshold).get(distance_metric, 0.4)

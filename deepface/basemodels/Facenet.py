@@ -1627,15 +1627,15 @@ def loadModel(
 
     home = functions.get_deepface_home()
 
-    if os.path.isfile(home + "/.deepface/weights/facenet_weights.h5") != True:
+    if os.path.isfile(f"{home}/.deepface/weights/facenet_weights.h5") != True:
         print("facenet_weights.h5 will be downloaded...")
 
-        output = home + "/.deepface/weights/facenet_weights.h5"
+        output = f"{home}/.deepface/weights/facenet_weights.h5"
         gdown.download(url, output, quiet=False)
 
     # -----------------------------------
 
-    model.load_weights(home + "/.deepface/weights/facenet_weights.h5")
+    model.load_weights(f"{home}/.deepface/weights/facenet_weights.h5")
 
     # -----------------------------------
 

@@ -11,7 +11,12 @@ def build_model():
     import dlib  # this requirement is not a must that's why imported here
 
     # check required file exists in the home/.deepface/weights folder
-    if os.path.isfile(home + "/.deepface/weights/shape_predictor_5_face_landmarks.dat") != True:
+    if (
+        os.path.isfile(
+            f"{home}/.deepface/weights/shape_predictor_5_face_landmarks.dat"
+        )
+        != True
+    ):
 
         file_name = "shape_predictor_5_face_landmarks.dat.bz2"
         print(f"{file_name} is going to be downloaded")
@@ -28,12 +33,11 @@ def build_model():
             f.write(data)
 
     face_detector = dlib.get_frontal_face_detector()
-    sp = dlib.shape_predictor(home + "/.deepface/weights/shape_predictor_5_face_landmarks.dat")
+    sp = dlib.shape_predictor(
+        f"{home}/.deepface/weights/shape_predictor_5_face_landmarks.dat"
+    )
 
-    detector = {}
-    detector["face_detector"] = face_detector
-    detector["sp"] = sp
-    return detector
+    return {"face_detector": face_detector, "sp": sp}
 
 
 def detect_face(detector, img, align=True):

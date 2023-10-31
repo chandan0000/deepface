@@ -30,18 +30,16 @@ def build_model(detector_backend):
         "fastmtcnn": FastMtcnnWrapper.build_model,
     }
 
-    if not "face_detector_obj" in globals():
+    if "face_detector_obj" not in globals():
         face_detector_obj = {}
 
     built_models = list(face_detector_obj.keys())
     if detector_backend not in built_models:
-        face_detector = backends.get(detector_backend)
-
-        if face_detector:
+        if face_detector := backends.get(detector_backend):
             face_detector = face_detector()
             face_detector_obj[detector_backend] = face_detector
         else:
-            raise ValueError("invalid detector_backend passed - " + detector_backend)
+            raise ValueError(f"invalid detector_backend passed - {detector_backend}")
 
     return face_detector_obj[detector_backend]
 
@@ -75,14 +73,10 @@ def detect_faces(face_detector, detector_backend, img, align=True):
         "fastmtcnn": FastMtcnnWrapper.detect_face,
     }
 
-    detect_face_fn = backends.get(detector_backend)
-
-    if detect_face_fn:  # pylint: disable=no-else-return
-        obj = detect_face_fn(face_detector, img, align)
-        # obj stores list of (detected_face, region, confidence)
-        return obj
+    if detect_face_fn := backends.get(detector_backend):
+        return detect_face_fn(face_detector, img, align)
     else:
-        raise ValueError("invalid detector_backend passed - " + detector_backend)
+        raise ValueError(f"invalid detector_backend passed - {detector_backend}")
 
 
 def alignment_procedure(img, left_eye, right_eye):

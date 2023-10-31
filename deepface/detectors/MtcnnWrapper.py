@@ -5,8 +5,7 @@ from deepface.detectors import FaceDetector
 def build_model():
     from mtcnn import MTCNN
 
-    face_detector = MTCNN()
-    return face_detector
+    return MTCNN()
 
 
 def detect_face(face_detector, img, align=True):

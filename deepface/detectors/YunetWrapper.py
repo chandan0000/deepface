@@ -6,16 +6,17 @@ from deepface.commons import functions
 
 
 def build_model():
-    # pylint: disable=C0301
-    url = "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx"
     file_name = "face_detection_yunet_2023mar.onnx"
     home = functions.get_deepface_home()
-    if os.path.isfile(home + f"/.deepface/weights/{file_name}") is False:
+    if os.path.isfile(f"{home}/.deepface/weights/{file_name}") is False:
         print(f"{file_name} will be downloaded...")
-        output = home + f"/.deepface/weights/{file_name}"
+        output = f"{home}/.deepface/weights/{file_name}"
+        # pylint: disable=C0301
+        url = "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx"
         gdown.download(url, output, quiet=False)
-    face_detector = cv2.FaceDetectorYN_create(home + f"/.deepface/weights/{file_name}", "", (0, 0))
-    return face_detector
+    return cv2.FaceDetectorYN_create(
+        f"{home}/.deepface/weights/{file_name}", "", (0, 0)
+    )
 
 
 def detect_face(detector, image, align=True, score_threshold=0.9):

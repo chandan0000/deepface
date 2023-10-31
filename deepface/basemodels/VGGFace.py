@@ -92,7 +92,7 @@ def loadModel(
     # -----------------------------------
 
     home = functions.get_deepface_home()
-    output = home + "/.deepface/weights/vgg_face_weights.h5"
+    output = f"{home}/.deepface/weights/vgg_face_weights.h5"
 
     if os.path.isfile(output) != True:
         print("vgg_face_weights.h5 will be downloaded...")
@@ -102,9 +102,4 @@ def loadModel(
 
     model.load_weights(output)
 
-    # -----------------------------------
-
-    # TO-DO: why?
-    vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
-
-    return vgg_face_descriptor
+    return Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)

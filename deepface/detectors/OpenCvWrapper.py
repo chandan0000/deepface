@@ -4,8 +4,7 @@ from deepface.detectors import FaceDetector
 
 
 def build_model():
-    detector = {}
-    detector["face_detector"] = build_cascade("haarcascade")
+    detector = {"face_detector": build_cascade("haarcascade")}
     detector["eye_detector"] = build_cascade("haarcascade_eye")
     return detector
 
@@ -13,7 +12,7 @@ def build_model():
 def build_cascade(model_name="haarcascade"):
     opencv_path = get_opencv_path()
     if model_name == "haarcascade":
-        face_detector_path = opencv_path + "haarcascade_frontalface_default.xml"
+        face_detector_path = f"{opencv_path}haarcascade_frontalface_default.xml"
         if os.path.isfile(face_detector_path) != True:
             raise ValueError(
                 "Confirm that opencv is installed on your environment! Expected path ",
@@ -23,7 +22,7 @@ def build_cascade(model_name="haarcascade"):
         detector = cv2.CascadeClassifier(face_detector_path)
 
     elif model_name == "haarcascade_eye":
-        eye_detector_path = opencv_path + "haarcascade_eye.xml"
+        eye_detector_path = f"{opencv_path}haarcascade_eye.xml"
         if os.path.isfile(eye_detector_path) != True:
             raise ValueError(
                 "Confirm that opencv is installed on your environment! Expected path ",
@@ -111,10 +110,10 @@ def align_face(eye_detector, img):
 
 def get_opencv_path():
     opencv_home = cv2.__file__
-    folders = opencv_home.split(os.path.sep)[0:-1]
+    folders = opencv_home.split(os.path.sep)[:-1]
 
     path = folders[0]
     for folder in folders[1:]:
-        path = path + "/" + folder
+        path = f"{path}/{folder}"
 
-    return path + "/data/"
+    return f"{path}/data/"

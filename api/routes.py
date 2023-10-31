@@ -25,15 +25,13 @@ def represent():
     enforce_detection = input_args.get("enforce_detection", True)
     align = input_args.get("align", True)
 
-    obj = service.represent(
+    return service.represent(
         img_path=img_path,
         model_name=model_name,
         detector_backend=detector_backend,
         enforce_detection=enforce_detection,
         align=align,
     )
-
-    return obj
 
 
 @blueprint.route("/verify", methods=["POST"])
@@ -89,12 +87,10 @@ def analyze():
     align = input_args.get("align", True)
     actions = input_args.get("actions", ["age", "gender", "emotion", "race"])
 
-    demographies = service.analyze(
+    return service.analyze(
         img_path=img_path,
         actions=actions,
         detector_backend=detector_backend,
         enforce_detection=enforce_detection,
         align=align,
     )
-
-    return demographies
