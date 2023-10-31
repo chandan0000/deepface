@@ -1,8 +1,7 @@
 def build_model():
     from retinaface import RetinaFace  # this is not a must dependency
 
-    face_detector = RetinaFace.build_model()
-    return face_detector
+    return RetinaFace.build_model()
 
 
 def detect_face(face_detector, img, align=True):

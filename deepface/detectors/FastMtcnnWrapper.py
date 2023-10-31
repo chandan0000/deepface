@@ -13,13 +13,13 @@ def build_model():
               Please install using 'pip install facenet-pytorch' ") from e
 
 
-    face_detector = fast_mtcnn(image_size=160,
-              thresholds=[0.6, 0.7, 0.7], # MTCNN thresholds
-              post_process=True,
-              device='cpu',
-              select_largest=False, # return result in descending order
-        )
-    return face_detector
+    return fast_mtcnn(
+        image_size=160,
+        thresholds=[0.6, 0.7, 0.7],  # MTCNN thresholds
+        post_process=True,
+        device='cpu',
+        select_largest=False,  # return result in descending order
+    )
 
 def xyxy_to_xywh(xyxy):
     """

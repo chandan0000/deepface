@@ -28,10 +28,7 @@ class SFaceModel:
             np.uint8
         )  # revert the image to original format and preprocess using the model
 
-        # Forward
-        embeddings = self.model.feature(input_blob)
-
-        return embeddings
+        return self.model.feature(input_blob)
 
 
 def load_model(
@@ -40,7 +37,7 @@ def load_model(
 
     home = functions.get_deepface_home()
 
-    file_name = home + "/.deepface/weights/face_recognition_sface_2021dec.onnx"
+    file_name = f"{home}/.deepface/weights/face_recognition_sface_2021dec.onnx"
 
     if not os.path.isfile(file_name):
 
@@ -48,6 +45,4 @@ def load_model(
 
         gdown.download(url, file_name, quiet=False)
 
-    model = SFaceModel(model_path=file_name)
-
-    return model
+    return SFaceModel(model_path=file_name)

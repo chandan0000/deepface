@@ -73,7 +73,7 @@ def test_cases():
     except:
         exception_thrown = True
 
-    assert exception_thrown is True
+    assert exception_thrown
 
     # -------------------------------------------
 
@@ -99,7 +99,7 @@ def test_cases():
         print(f"Unexpected exception thrown: {str(err)}")
         exception_thrown = True
 
-    assert exception_thrown is False
+    assert not exception_thrown
 
     # -------------------------------------------
     # enforce detection on for verify
@@ -109,7 +109,7 @@ def test_cases():
     except:
         exception_thrown = True
 
-    assert exception_thrown is True
+    assert exception_thrown
     # -------------------------------------------
     # enforce detection off for verify
 
@@ -121,7 +121,7 @@ def test_cases():
         print(f"Unexpected exception thrown: {str(err)}")
         exception_thrown = True
 
-    assert exception_thrown is False
+    assert not exception_thrown
     # -------------------------------------------
 
     print("-----------------------------------------")
@@ -260,16 +260,8 @@ def test_cases():
 
                 evaluate(passed)
 
-                if passed:
-                    test_result_label = "passed"
-                else:
-                    test_result_label = "failed"
-
-                if prediction == True:
-                    classified_label = "verified"
-                else:
-                    classified_label = "unverified"
-
+                test_result_label = "passed" if passed else "failed"
+                classified_label = "verified" if prediction == True else "unverified"
                 print(
                     img1.split("/", maxsplit=1)[-1],
                     "-",
@@ -356,12 +348,12 @@ def test_cases():
 
 test_cases()
 
-print("num of test cases run: " + str(num_cases))
-print("succeeded test cases: " + str(succeed_cases))
+print(f"num of test cases run: {str(num_cases)}")
+print(f"succeeded test cases: {str(succeed_cases)}")
 
 test_score = (100 * succeed_cases) / num_cases
 
-print("test coverage: " + str(test_score))
+print(f"test coverage: {str(test_score)}")
 
 if test_score > expected_coverage:
     print("well done! min required test coverage is satisfied")

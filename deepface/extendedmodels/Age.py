@@ -44,13 +44,16 @@ def loadModel(
 
     home = functions.get_deepface_home()
 
-    if os.path.isfile(home + "/.deepface/weights/age_model_weights.h5") != True:
+    if (
+        os.path.isfile(f"{home}/.deepface/weights/age_model_weights.h5")
+        != True
+    ):
         print("age_model_weights.h5 will be downloaded...")
 
-        output = home + "/.deepface/weights/age_model_weights.h5"
+        output = f"{home}/.deepface/weights/age_model_weights.h5"
         gdown.download(url, output, quiet=False)
 
-    age_model.load_weights(home + "/.deepface/weights/age_model_weights.h5")
+    age_model.load_weights(f"{home}/.deepface/weights/age_model_weights.h5")
 
     return age_model
 
@@ -59,5 +62,4 @@ def loadModel(
 
 def findApparentAge(age_predictions):
     output_indexes = np.array(list(range(0, 101)))
-    apparent_age = np.sum(age_predictions * output_indexes)
-    return apparent_age
+    return np.sum(age_predictions * output_indexes)

@@ -18,7 +18,9 @@ class DlibResNet:
         # ---------------------
 
         home = functions.get_deepface_home()
-        weight_file = home + "/.deepface/weights/dlib_face_recognition_resnet_model_v1.dat"
+        weight_file = (
+            f"{home}/.deepface/weights/dlib_face_recognition_resnet_model_v1.dat"
+        )
 
         # ---------------------
 

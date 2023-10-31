@@ -67,7 +67,7 @@ def loadModel(
     home = functions.get_deepface_home()
 
     file_name = "arcface_weights.h5"
-    output = home + "/.deepface/weights/" + file_name
+    output = f"{home}/.deepface/weights/{file_name}"
 
     if os.path.isfile(output) != True:
 
@@ -93,9 +93,7 @@ def ResNet34():
     x = PReLU(shared_axes=[1, 2], name="conv1_prelu")(x)
     x = stack_fn(x)
 
-    model = training.Model(img_input, x, name="ResNet34")
-
-    return model
+    return training.Model(img_input, x, name="ResNet34")
 
 
 def block1(x, filters, kernel_size=3, stride=1, conv_shortcut=True, name=None):
@@ -108,46 +106,52 @@ def block1(x, filters, kernel_size=3, stride=1, conv_shortcut=True, name=None):
             strides=stride,
             use_bias=False,
             kernel_initializer="glorot_normal",
-            name=name + "_0_conv",
+            name=f"{name}_0_conv",
         )(x)
         shortcut = BatchNormalization(
-            axis=bn_axis, epsilon=2e-5, momentum=0.9, name=name + "_0_bn"
+            axis=bn_axis, epsilon=2e-5, momentum=0.9, name=f"{name}_0_bn"
         )(shortcut)
     else:
         shortcut = x
 
-    x = BatchNormalization(axis=bn_axis, epsilon=2e-5, momentum=0.9, name=name + "_1_bn")(x)
-    x = ZeroPadding2D(padding=1, name=name + "_1_pad")(x)
+    x = BatchNormalization(
+        axis=bn_axis, epsilon=2e-5, momentum=0.9, name=f"{name}_1_bn"
+    )(x)
+    x = ZeroPadding2D(padding=1, name=f"{name}_1_pad")(x)
     x = Conv2D(
         filters,
         3,
         strides=1,
         kernel_initializer="glorot_normal",
         use_bias=False,
-        name=name + "_1_conv",
+        name=f"{name}_1_conv",
     )(x)
-    x = BatchNormalization(axis=bn_axis, epsilon=2e-5, momentum=0.9, name=name + "_2_bn")(x)
-    x = PReLU(shared_axes=[1, 2], name=name + "_1_prelu")(x)
+    x = BatchNormalization(
+        axis=bn_axis, epsilon=2e-5, momentum=0.9, name=f"{name}_2_bn"
+    )(x)
+    x = PReLU(shared_axes=[1, 2], name=f"{name}_1_prelu")(x)
 
-    x = ZeroPadding2D(padding=1, name=name + "_2_pad")(x)
+    x = ZeroPadding2D(padding=1, name=f"{name}_2_pad")(x)
     x = Conv2D(
         filters,
         kernel_size,
         strides=stride,
         kernel_initializer="glorot_normal",
         use_bias=False,
-        name=name + "_2_conv",
+        name=f"{name}_2_conv",
     )(x)
-    x = BatchNormalization(axis=bn_axis, epsilon=2e-5, momentum=0.9, name=name + "_3_bn")(x)
+    x = BatchNormalization(
+        axis=bn_axis, epsilon=2e-5, momentum=0.9, name=f"{name}_3_bn"
+    )(x)
 
-    x = Add(name=name + "_add")([shortcut, x])
+    x = Add(name=f"{name}_add")([shortcut, x])
     return x
 
 
 def stack1(x, filters, blocks, stride1=2, name=None):
-    x = block1(x, filters, stride=stride1, name=name + "_block1")
+    x = block1(x, filters, stride=stride1, name=f"{name}_block1")
     for i in range(2, blocks + 1):
-        x = block1(x, filters, conv_shortcut=False, name=name + "_block" + str(i))
+        x = block1(x, filters, conv_shortcut=False, name=f"{name}_block{str(i)}")
     return x
 
 

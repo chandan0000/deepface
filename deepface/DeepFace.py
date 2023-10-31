@@ -71,12 +71,11 @@ def build_model(model_name):
         "Race": Race.loadModel,
     }
 
-    if not "model_obj" in globals():
+    if "model_obj" not in globals():
         model_obj = {}
 
-    if not model_name in model_obj:
-        model = models.get(model_name)
-        if model:
+    if model_name not in model_obj:
+        if model := models.get(model_name):
             model = model()
             model_obj[model_name] = model
         else:
@@ -211,7 +210,7 @@ def verify(
 
     toc = time.time()
 
-    resp_obj = {
+    return {
         "verified": distance <= threshold,
         "distance": distance,
         "threshold": threshold,
@@ -221,8 +220,6 @@ def verify(
         "facial_areas": {"img1": facial_areas[0], "img2": facial_areas[1]},
         "time": round(toc - tic, 2),
     }
-
-    return resp_obj
 
 
 def analyze(
@@ -345,7 +342,13 @@ def analyze(
                 action = actions[index]
                 pbar.set_description(f"Action: {action}")
 
-                if action == "emotion":
+                if action == "age":
+                    age_predictions = models["age"].predict(img_content, verbose=0)[0, :]
+                    apparent_age = Age.findApparentAge(age_predictions)
+                    # int cast is for exception - object of type 'float32' is not JSON serializable
+                    obj["age"] = int(apparent_age)
+
+                elif action == "emotion":
                     img_gray = cv2.cvtColor(img_content[0], cv2.COLOR_BGR2GRAY)
                     img_gray = cv2.resize(img_gray, (48, 48))
                     img_gray = np.expand_dims(img_gray, axis=0)
@@ -361,12 +364,6 @@ def analyze(
                         obj["emotion"][emotion_label] = emotion_prediction
 
                     obj["dominant_emotion"] = Emotion.labels[np.argmax(emotion_predictions)]
-
-                elif action == "age":
-                    age_predictions = models["age"].predict(img_content, verbose=0)[0, :]
-                    apparent_age = Age.findApparentAge(age_predictions)
-                    # int cast is for exception - object of type 'float32' is not JSON serializable
-                    obj["age"] = int(apparent_age)
 
                 elif action == "gender":
                     gender_predictions = models["gender"].predict(img_content, verbose=0)[0, :]
@@ -486,17 +483,12 @@ def find(
                     exact_path = r + "/" + file
                     employees.append(exact_path)
 
-        if len(employees) == 0:
+        if not employees:
             raise ValueError(
                 "There is no image in ",
                 db_path,
                 " folder! Validate .jpg or .png files exist in this path.",
             )
-
-        # ------------------------
-        # find representations for db images
-
-        representations = []
 
         # for employee in employees:
         pbar = tqdm(
@@ -504,6 +496,7 @@ def find(
             desc="Finding representations",
             disable=silent,
         )
+        representations = []
         for index in pbar:
             employee = employees[index]
 
@@ -528,9 +521,7 @@ def find(
 
                 img_representation = embedding_obj[0]["embedding"]
 
-                instance = []
-                instance.append(employee)
-                instance.append(img_representation)
+                instance = [employee, img_representation]
                 representations.append(instance)
 
         # -------------------------------
@@ -540,8 +531,7 @@ def find(
 
         if not silent:
             print(
-                f"Representations stored in {db_path}/{file_name} file."
-                + "Please delete this file when you add new identities in your database."
+                f"Representations stored in {db_path}/{file_name} file.Please delete this file when you add new identities in your database."
             )
 
     # ----------------------------
@@ -702,10 +692,11 @@ def represent(
             # SFace and Dlib are not keras models and no verbose arguments
             embedding = model.predict(img)[0].tolist()
 
-        resp_obj = {}
-        resp_obj["embedding"] = embedding
-        resp_obj["facial_area"] = region
-        resp_obj["face_confidence"] = confidence
+        resp_obj = {
+            "embedding": embedding,
+            "facial_area": region,
+            "face_confidence": confidence,
+        }
         resp_objs.append(resp_obj)
 
     return resp_objs
@@ -746,7 +737,7 @@ def stream(
 
     if time_threshold < 1:
         raise ValueError(
-            "time_threshold must be greater than the value 1 but you passed " + str(time_threshold)
+            f"time_threshold must be greater than the value 1 but you passed {str(time_threshold)}"
         )
 
     if frame_threshold < 1:
@@ -815,15 +806,15 @@ def extract_faces(
     )
 
     for img, region, confidence in img_objs:
-        resp_obj = {}
-
         # discard expanded dimension
         if len(img.shape) == 4:
             img = img[0]
 
-        resp_obj["face"] = img[:, :, ::-1]
-        resp_obj["facial_area"] = region
-        resp_obj["confidence"] = confidence
+        resp_obj = {
+            "face": img[:, :, ::-1],
+            "facial_area": region,
+            "confidence": confidence,
+        }
         resp_objs.append(resp_obj)
 
     return resp_objs
@@ -876,10 +867,7 @@ def detectFace(
         grayscale=False,
     )
 
-    extracted_face = None
-    if len(face_objs) > 0:
-        extracted_face = face_objs[0]["face"]
-    return extracted_face
+    return face_objs[0]["face"] if len(face_objs) > 0 else None
 
 
 # ---------------------------

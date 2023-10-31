@@ -41,7 +41,7 @@ img1_graph = []
 img2_graph = []
 distance_graph = []
 
-for i in range(0, 200):
+for _ in range(0, 200):
     img1_graph.append(img1_representation)
     img2_graph.append(img2_representation)
     distance_graph.append(distance_vector)

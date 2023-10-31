@@ -36,8 +36,8 @@ def initialize_folder():
         OSError: if the folder cannot be created.
     """
     home = get_deepface_home()
-    deepFaceHomePath = home + "/.deepface"
-    weightsPath = deepFaceHomePath + "/weights"
+    deepFaceHomePath = f"{home}/.deepface"
+    weightsPath = f"{deepFaceHomePath}/weights"
 
     if not os.path.exists(deepFaceHomePath):
         os.makedirs(deepFaceHomePath, exist_ok=True)
@@ -71,8 +71,7 @@ def loadBase64Img(uri):
     """
     encoded_data = uri.split(",")[1]
     nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    return img
+    return cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
 
 def load_image(img):
@@ -209,7 +208,7 @@ def extract_faces(
                     )
 
             # double check: if target image is not still the same size with target.
-            if current_img.shape[0:2] != target_size:
+            if current_img.shape[:2] != target_size:
                 current_img = cv2.resize(current_img, target_size)
 
             # normalizing the image pixels
@@ -229,7 +228,7 @@ def extract_faces(
             extracted_face = [img_pixels, region_obj, confidence]
             extracted_faces.append(extracted_face)
 
-    if len(extracted_faces) == 0 and enforce_detection == True:
+    if not extracted_faces and enforce_detection == True:
         raise ValueError(
             f"Detected face shape is {img.shape}. Consider to set enforce_detection arg to False."
         )
@@ -319,7 +318,7 @@ def find_target_size(model_name):
 
     target_size = target_sizes.get(model_name)
 
-    if target_size == None:
+    if target_size is None:
         raise ValueError(f"unimplemented model name - {model_name}")
 
     return target_size

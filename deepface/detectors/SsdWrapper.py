@@ -41,11 +41,7 @@ def build_model():
 
     eye_detector = OpenCvWrapper.build_cascade("haarcascade_eye")
 
-    detector = {}
-    detector["face_detector"] = face_detector
-    detector["eye_detector"] = eye_detector
-
-    return detector
+    return {"face_detector": face_detector, "eye_detector": eye_detector}
 
 
 def detect_face(detector, img, align=True):
